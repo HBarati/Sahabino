@@ -1,0 +1,9 @@
+2022-10-16 22:01:15 DEBUG Test:8 - Debug log message2
+2022-10-16 22:01:15 INFO  Test:9 - Info log message2
+2022-10-16 22:01:15 ERROR Test:10 - Error log message2
+2022-10-17 14:07:15 DEBUG Test:8 - Debug log message2
+2022-10-17 14:07:15 INFO  Test:9 - Info log message2
+2022-10-17 14:07:15 ERROR Test:10 - Error log message2
+2022-10-18 16:53:22 DEBUG Test:8 - Debug log message2
+2022-10-18 16:53:22 INFO  Test:9 - Info log message2
+2022-10-18 16:53:22 ERROR Test:10 - Error log message2
