@@ -13,17 +13,16 @@ public class fileIngester {
             File directoryPath = new File(config.getFolderName());
             File[] filesList = directoryPath.listFiles();
             System.out.println("List of files and directories in the specified directory:");
-            List<Thread> threadList = new ArrayList<>();
+//            List<Thread> threadList = new ArrayList<>();
             if (filesList != null) {
                 for(File file : filesList) {
                     Thread thread = new Thread(new LogIngester(file));
-                    threadList.add(thread);
+                    Executor executor = Executors.newCachedThreadPool();
+                    executor.execute(thread);
                 }
             }
-            for (Thread thread : threadList) {
-                Executor executor = Executors.newCachedThreadPool();
-                executor.execute(thread);
-            }
+//            for (Thread thread : threadList) {
+//            }
             break;
         }
     }
