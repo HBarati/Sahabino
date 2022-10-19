@@ -15,8 +15,7 @@ public class LogIngester implements Runnable{
 
     @Override
     public void run() {
-        logger.info(Thread.currentThread().getName());
-        //TODO LOGGING
+        logger.info("in Thread: "+Thread.currentThread().getName()+" write log file: "+file.getName()+" in kafka");
         try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -28,8 +27,10 @@ public class LogIngester implements Runnable{
         }
         boolean delete = file.delete();
         if (delete) {
-            System.out.println("");
-            //TODO LOGGING
+            logger.info(file.getName()+" is deleted");
+        }
+        else {
+            logger.error(file.getName()+" cant  be deleted!");
         }
     }
 }

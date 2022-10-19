@@ -1,9 +1,9 @@
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class fileIngester {
 
@@ -16,13 +16,13 @@ public class fileIngester {
             List<Thread> threadList = new ArrayList<>();
             if (filesList != null) {
                 for(File file : filesList) {
-                    //TODO multithread refactor (ThreadPool)
                     Thread thread = new Thread(new LogIngester(file));
                     threadList.add(thread);
                 }
             }
             for (Thread thread : threadList) {
-                thread.start();
+                Executor executor = Executors.newCachedThreadPool();
+                executor.execute(thread);
             }
             break;
         }
