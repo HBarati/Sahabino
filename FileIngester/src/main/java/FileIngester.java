@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 
 public class FileIngester {
 
-    public static void main(String args[]) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         while (true){
             ConfigReader config = ConfigReader.load();
             File directoryPath = new File(config.getFolderName());
