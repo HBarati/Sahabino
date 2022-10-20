@@ -3,12 +3,6 @@ import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +35,7 @@ public class LogIngester implements Runnable {
                     String priority = matcher.group(4);
                     String category = matcher.group(5);
                     String message = matcher.group(6);
-                    Log log = new Log(date, time, threadId, priority, category, message);
+                    LogModel log = new LogModel(date, time, threadId, priority, category, message);
 
                     KafkaLogsProducer kafkaLogsProducer = new KafkaLogsProducer();
                     kafkaLogsProducer.runProducer(log);

@@ -5,10 +5,10 @@ import java.util.Properties;
 
 public class KafkaLogsProducer {
     //TODO configurable
-    private final static String TOPIC = "logs";
+    private final static String TOPIC = "log22222";
     private final static String BOOTSTRAP_SERVERS = "localhost:9092";
 
-    private static Producer<String, Log> createProducer() {
+    private static Producer<String, LogModel> createProducer() {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "KafkaExampleProducer");
@@ -17,12 +17,12 @@ public class KafkaLogsProducer {
         return new KafkaProducer<>(props);
     }
 
-    static void runProducer(Log log) throws Exception {
-        final Producer<String , Log> producer = createProducer();
+    static void runProducer(LogModel log) throws Exception {
+        final Producer<String , LogModel> producer = createProducer();
 
         try {
 //            for (long index = time; index < time + sendMessageCount; index++) {
-                final ProducerRecord<String, Log> record = new ProducerRecord<>(TOPIC, log.getCategory(), log);
+                final ProducerRecord<String, LogModel> record = new ProducerRecord<>(TOPIC, log.getCategory(), log);
                 RecordMetadata metadata = producer.send(record).get();
 //                long elapsedTime = System.currentTimeMillis() - time;
 //                System.out.printf("sent record(key=%s value=%s) " + "meta(partition=%d, offset=%d) time=%d\n",

@@ -1,4 +1,4 @@
-public class Log {
+public class LogModel {
 
     private String date;
     private String time ;
@@ -7,10 +7,10 @@ public class Log {
     private String category ;
     private String message ;
 
-    public Log() {
+    public LogModel() {
     }
 
-    public Log(String date, String time, String threadId, String priority, String category, String message) {
+    public LogModel(String date, String time, String threadId, String priority, String category, String message) {
         this.date = date;
         this.time = time;
         this.threadId = threadId;
