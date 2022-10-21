@@ -1,4 +1,5 @@
 2015-01-22 01:52:54,237 [http-bio-80-exec-5] FATAL   TestLog4jServlet - Show FATAL message
 2021-07-12 01:22:42,114 [ThreadName] INFO package.name.ClassName - msg
-2015-01-22 01:52:54,237 [http-bio-80-exec-5] FATAL   TestLog4jServlet - msg2
-2021-07-12 01:22:42,114 [ThreadName] INFO package.name.ClassName - msg2
+2015-01-22 01:52:54,237 [http-bio-80-exec-5] ERROR   TestLog4jServlet - msg2
+2021-07-12 01:22:42,114 [ThreadName] WARNING package.name.ClassName - msg2
+2021-07-12 01:22:42,114 [ThreadName] DEBUG package.name.ClassName - msg2

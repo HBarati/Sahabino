@@ -1,6 +1,4 @@
-/FileIngester/.idea
-/FileIngester/target
-/RulesEvaluatot/.idea
-/RulesEvaluatot/target
+.idea
+target
 sahabino.pdf
 /LogExample
