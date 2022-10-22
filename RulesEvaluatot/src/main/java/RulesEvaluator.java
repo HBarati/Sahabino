@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
+import java.util.Random;
 
 
 public class RulesEvaluator {
@@ -32,7 +33,8 @@ public class RulesEvaluator {
         Statement stmt;
         connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/logsAlert","hatef","123456");
         stmt = connection.createStatement();
-        String sql = String.format("INSERT INTO LogType1Alert VALUES ('%s', '%s')", logModel.getPriority(), logModel.getMessage());
+        Random rd = new Random();
+        String sql = String.format("INSERT INTO log_model VALUES ('%d','%s', '%s')", rd.nextLong() ,logModel.getPriority(), logModel.getMessage());
         stmt.executeUpdate(sql);
 
         System.out.println(sql);
