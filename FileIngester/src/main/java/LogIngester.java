@@ -29,7 +29,6 @@ public class LogIngester implements Runnable {
                 if (matcher.matches() && matcher.groupCount() == 6) {
                     //TODO date and time fix
                     String date = matcher.group(1);
-//                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss,SSS");
                     String time = matcher.group(2);
                     String threadId = matcher.group(3);
                     String priority = matcher.group(4);

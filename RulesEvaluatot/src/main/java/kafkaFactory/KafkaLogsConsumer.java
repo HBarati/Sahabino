@@ -1,6 +1,8 @@
+package kafkaFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.LogModel;
 import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 
@@ -12,11 +14,10 @@ public class KafkaLogsConsumer {
     private final static String TOPIC = "log22222";
     private final static String BOOTSTRAP_SERVERS = "localhost:9092";
 
-     static Consumer<String, String> createConsumer() {
+     public static Consumer<String, String> createConsumer() {
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
-        //UUID.randomUUID().toString()
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -29,7 +30,7 @@ public class KafkaLogsConsumer {
         return consumer;
     }
 
-    static List<LogModel> runConsumer(Consumer<String, String> consumer ) throws IOException {
+    public static List<LogModel> runConsumer(Consumer<String, String> consumer) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<LogModel> logModelList = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package com.sahabino.sahabinoBackend.LogModel;
+package com.sahabino.sahabinoBackend.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +9,10 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table
-public class LogModel {
+public class AlertType1 {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long logID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long logID;
     String logLevel;
     String logMessage;
 }
