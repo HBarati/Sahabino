@@ -1,5 +1,6 @@
 package kafkaFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.LogModel;
 import org.apache.kafka.clients.consumer.*;
@@ -30,32 +31,22 @@ public class KafkaLogsConsumer {
         return consumer;
     }
 
-    public static List<LogModel> runConsumer(Consumer<String, String> consumer) throws IOException {
+    public static List<LogModel> runConsumer(Consumer<String, String> consumer) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<LogModel> logModelList = new ArrayList<>();
-
-//        final Consumer<String, String> consumer = createConsumer();
-//        final int giveUp = 100;   int noRecordsCount = 0;
 
         final ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(500));
         System.out.println(consumerRecords.count());
         for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-            LogModel log = objectMapper.readValue(consumerRecord.value(), LogModel.class);
+            LogModel log = null;
+            try {
+                log = objectMapper.readValue(consumerRecord.value(), LogModel.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             logModelList.add(log);
         }
-//            if (consumerRecords.count()==0) {
-//                noRecordsCount++;
-//                if (noRecordsCount > giveUp) break;
-//                else continue;
-//            }
-
-//            consumerRecords.forEach(record -> {
-//                System.out.printf("Consumer Record:(%s, %s, %d, %d)\n",
-//                        record.key(), record.value(),
-//                        record.partition(), record.offset());
-//            });
         consumer.commitAsync();
-
         return logModelList;
     }
 }

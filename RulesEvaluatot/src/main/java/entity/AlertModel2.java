@@ -6,6 +6,13 @@ public class AlertModel2 implements AlertModel {
     private String priority ;
     private String rate;
 
+    public AlertModel2(String componentName, String description, String priority, String rate) {
+        this.componentName = componentName;
+        this.description = description;
+        this.priority = priority;
+        this.rate = rate;
+    }
+
     public String getComponentName() {
         return componentName;
     }

@@ -2,14 +2,14 @@ package entity;
 
 import java.time.LocalDateTime;
 
-public class LogModel  {
+public class LogModel {
 
     private String date;
-    private String time ;
-    private String threadId ;
-    private String priority ;
-    private String category ;
-    private String message ;
+    private String time;
+    private String threadId;
+    private String priority;
+    private String category;
+    private String message;
 
     public LogModel() {
     }
@@ -74,13 +74,6 @@ public class LogModel  {
 
     @Override
     public String toString() {
-        return "entity.LogModel{" +
-                "date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                ", threadId='" + threadId + '\'' +
-                ", priority='" + priority + '\'' +
-                ", category='" + category + '\'' +
-                ", message='" + message + '\'' +
-                '}';
+        return date + " " + time + " " + threadId + " " + priority + " " + category + " " + message;
     }
 }
