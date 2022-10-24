@@ -1,15 +1,14 @@
+package ingester;
+
+import config.ConfigReader;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static java.lang.Thread.sleep;
-
 public class FileIngester {
-
     public static void main(String[] args) throws IOException, InterruptedException {
         while (true){
             ConfigReader config = ConfigReader.load();
@@ -24,7 +23,6 @@ public class FileIngester {
                     executor.execute(thread);
                 }
             }
-//            break;
             Thread.sleep(1500);
         }
     }

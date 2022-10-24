@@ -15,6 +15,7 @@ public class main {
     public static void main(String[] args) throws IOException, SQLException, InterruptedException, ParseException {
         Executor executor = Executors.newCachedThreadPool();
         List<RuleEvaluator> ruleEvaluators = new ArrayList<RuleEvaluator>();
+
         ruleEvaluators.add(new RulesEvaluatorType1());
         ruleEvaluators.add(new RulesEvaluatorType2());
         ruleEvaluators.add(new RulesEvaluatorType3());

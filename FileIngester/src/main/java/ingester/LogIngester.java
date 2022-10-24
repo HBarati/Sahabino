@@ -1,3 +1,6 @@
+package ingester;
+
+import entity.LogModel;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -27,21 +30,16 @@ public class LogIngester implements Runnable {
                 Matcher matcher = p.matcher(sample);
                 System.out.println(matcher.matches());
                 if (matcher.matches() && matcher.groupCount() == 6) {
-                    //TODO date and time fix
-                    String date = matcher.group(1);
-                    String time = matcher.group(2);
-                    String threadId = matcher.group(3);
-                    String priority = matcher.group(4);
-                    String category = matcher.group(5);
-                    String message = matcher.group(6);
-                    LogModel log = new LogModel(date, time, threadId, priority, category, message);
+                    String[] logPart = new String[6];
+                    for (int i = 0; i < 6; i++) {
+                        logPart[i] = matcher.group(i + 1);
+                    }
+                    LogModel log = new LogModel(logPart[0], logPart[1], logPart[2], logPart[3], logPart[4], logPart[5]);
 
                     KafkaLogsProducer kafkaLogsProducer = new KafkaLogsProducer();
                     kafkaLogsProducer.runProducer(log);
 
                 }
-                //TODO write in kafka
-//                System.out.println(line);
             }
         } catch (Exception e) {
             e.printStackTrace();
