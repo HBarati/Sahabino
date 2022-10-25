@@ -48,7 +48,6 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
 
     private void ruleType2Checker(LinkedList<LogModel> logQueue, String Type2Rate) {
         int rate = Integer.parseInt(Type2Rate);
-        System.out.println(logQueue.size());
         if (logQueue.size() >= rate) {
             String description = twoLastLog(logQueue);
             AlertModel2 alertModel2 = new AlertModel2(logQueue.getFirst().getCategory(),
@@ -127,11 +126,10 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
                 + alertModel2.getRate());
         String sql = String.format("INSERT INTO alert_type2 (component_name, description, log_level , rate) VALUES ('%s','%s', '%s' ,'%s')",
                 alertModel2.getComponentName(), alertModel2.getDescription(), alertModel2.getPriority(), alertModel2.getRate());
-        System.out.println(sql);
         try {
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate(sql);
-//            System.out.println(sql);
+            int rowAffected = stmt.executeUpdate(sql);
+            logger.info(rowAffected + " row affected");
         } catch (SQLException e) {
             e.printStackTrace();
         }

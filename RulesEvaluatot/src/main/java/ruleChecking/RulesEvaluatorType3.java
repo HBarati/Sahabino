@@ -53,7 +53,7 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
         }
     }
 
-    private void addingLogsInDuration(List<LogModel> logModelList
+    public void addingLogsInDuration(List<LogModel> logModelList
             , LinkedList<LogModel> logQueue
             , Date someMinuteAgo
             , Date now
@@ -74,10 +74,13 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
         }
     }
 
-    private void deleteLogsOutOfDuration(LinkedList<LogModel> logQueue, Date someMinuteAgo, Date now) {
+    public void deleteLogsOutOfDuration(LinkedList<LogModel> logQueue, Date someMinuteAgo, Date now) {
         while (true) {
             Date parse = null;
             SimpleDateFormat formatter = new SimpleDateFormat(config.getLogDateFormat());
+            if (logQueue.size() == 0) {
+                break;
+            }
             LogModel lastLog = logQueue.getLast();
             String lastLogDateTime = lastLog.getDate() + " " + lastLog.getTime();
             try {
@@ -104,7 +107,8 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
                 alertModel3.getComponentName(), alertModel3.getRate());
         try {
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate(query);
+            int rowAffected = stmt.executeUpdate(query);
+            logger.info(rowAffected + " row affected");
         } catch (SQLException e) {
             e.printStackTrace();
         }

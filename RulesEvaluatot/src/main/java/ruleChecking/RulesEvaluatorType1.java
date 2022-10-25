@@ -27,21 +27,22 @@ public class RulesEvaluatorType1 extends RuleEvaluator {
                     mySqlWriter(alertModel1);
                 }
             }
-
+            sleep(Integer.parseInt(config.getRuleEvaluatingInterval()));
         }
     }
 
     @Override
-    void mySqlWriter(AlertModel alertModel){
+    void mySqlWriter(AlertModel alertModel) {
         AlertModel1 alertModel1 = (AlertModel1) alertModel;
         String query = String.format("INSERT INTO alert_type1 (log_level, log_message) VALUES ('%s', '%s')",
                 alertModel1.getPriority(), alertModel1.getMessage());
         try {
             Statement stmt = connection.createStatement();
             logger.info("insert alert type1 on table alert_type1 in logsAlert Data Base with parameters: "
-                    +alertModel1.getPriority()+" and "
-                    +alertModel1.getMessage());
-            stmt.executeUpdate(query);
+                    + alertModel1.getPriority() + " and "
+                    + alertModel1.getMessage());
+            int rowAffected = stmt.executeUpdate(query);
+            logger.info(rowAffected + " row affected");
         } catch (SQLException e) {
             e.printStackTrace();
         }
