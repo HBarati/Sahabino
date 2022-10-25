@@ -10,16 +10,8 @@ public class AlertModel1 implements AlertModel{
         this.message = message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
     }
 
     public String getPriority() {

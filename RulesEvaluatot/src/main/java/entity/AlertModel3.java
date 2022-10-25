@@ -13,15 +13,8 @@ public class AlertModel3 implements AlertModel{
         return componentName;
     }
 
-    public void setComponentName(String componentName) {
-        this.componentName = componentName;
-    }
-
     public String getRate() {
         return rate;
     }
 
-    public void setRate(String rate) {
-        this.rate = rate;
-    }
 }

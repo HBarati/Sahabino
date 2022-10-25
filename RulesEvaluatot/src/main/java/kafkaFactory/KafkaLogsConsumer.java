@@ -9,21 +9,11 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.Logger;
 import ruleChecking.RuleEvaluator;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
 public class KafkaLogsConsumer {
-    private static ConfigReader config;
-
-    static {
-        try {
-            config = ConfigReader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    private static ConfigReader config = ConfigReader.load();
     private final static String TOPIC = config.getTopic();
     private final static String BOOTSTRAP_SERVERS = config.getBootStrapServer();
 
@@ -39,7 +29,8 @@ public class KafkaLogsConsumer {
 
         final Consumer<String, String> consumer = new KafkaConsumer<>(props);
         Logger logger = Logger.getLogger(RuleEvaluator.class);
-        logger.info("Kafka consumer is using topic: "+config.getTopic()+"and BootStrap server: "+config.getBootStrapServer()+" in "+consumer.toString());
+        logger.info("Kafka consumer is using topic: " + config.getTopic() + "and BootStrap server: "
+                + config.getBootStrapServer() + " in " + consumer.toString());
         consumer.subscribe(Collections.singletonList(TOPIC));
         return consumer;
     }
@@ -59,7 +50,7 @@ public class KafkaLogsConsumer {
                 logger.error("logs in the kafka are not valid type");
                 e.printStackTrace();
             }
-            logger.info("read log: "+log.toString()+" from kafka and add to the log list logModelList as "+(logModelList.size()+2)+"s log");
+            logger.info("read log: " + log.toString() + " from kafka and add to the log list logModelList as " + (logModelList.size() + 2) + "s log");
             logModelList.add(log);
         }
         consumer.commitAsync();

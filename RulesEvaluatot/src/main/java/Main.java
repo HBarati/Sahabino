@@ -5,20 +5,23 @@ import ruleChecking.RulesEvaluatorType3;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class main {
-    public static void main(String[] args) throws IOException, SQLException, InterruptedException, ParseException {
+public class Main {
+    public static void main(String[] args) {
         Executor executor = Executors.newCachedThreadPool();
-        List<RuleEvaluator> ruleEvaluators = new ArrayList<RuleEvaluator>();
+        List<RuleEvaluator> ruleEvaluators = new ArrayList<>();
+        try {
+            ruleEvaluators.add(new RulesEvaluatorType1());
+            ruleEvaluators.add(new RulesEvaluatorType2());
+            ruleEvaluators.add(new RulesEvaluatorType3());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        ruleEvaluators.add(new RulesEvaluatorType1());
-        ruleEvaluators.add(new RulesEvaluatorType2());
-        ruleEvaluators.add(new RulesEvaluatorType3());
         for (RuleEvaluator ruleEvaluator : ruleEvaluators) {
             executor.execute(new Thread(ruleEvaluator));
         }

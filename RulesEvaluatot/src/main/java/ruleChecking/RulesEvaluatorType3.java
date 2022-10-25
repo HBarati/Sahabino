@@ -5,7 +5,6 @@ import entity.AlertModel3;
 import entity.LogModel;
 import kafkaFactory.KafkaLogsConsumer;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -17,16 +16,16 @@ import java.util.concurrent.TimeUnit;
 
 public class RulesEvaluatorType3 extends RuleEvaluator {
 
-    public RulesEvaluatorType3() throws IOException, SQLException {
+    public RulesEvaluatorType3() throws SQLException {
     }
 
     @Override
     public void run() {
         List<LogModel> logModelList;
-        String Type3LogCategory = config.getType3LogCategory();
-        long duration = Long.parseLong(config.getType3Period());
-        String Type3Rate = config.getType3Rate();
         LinkedList<LogModel> logQueue = new LinkedList<>();
+        String Type3LogCategory = config.getType3LogCategory();
+        String Type3Rate = config.getType3Rate();
+        long duration = Long.parseLong(config.getType3Period());
 
         while (true) {
             Date now = new Date(System.currentTimeMillis());
@@ -36,10 +35,10 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
             addingLogsInDuration(logModelList, logQueue, someMinuteAgo, now, Type3LogCategory);
             if (!logQueue.isEmpty()) {
                 deleteLogsOutOfDuration(logQueue, someMinuteAgo, now);
-                logger.info("Queue in alert type3 is updated! (all the logs is in duration: "+duration+")");
+                logger.info("Queue in alert type3 is updated! (all the logs is in duration: " + duration + ")");
                 ruleType3Checker(logQueue, Type3Rate);
-                sleep(1500);
-            }else {
+                sleep(Integer.parseInt(config.getRuleEvaluatingInterval()));
+            } else {
                 logger.fatal("alert type3 log Queue is empty!");
             }
         }
@@ -60,7 +59,7 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
             , Date now
             , String Type3LogCategory) {
         Date parse = null;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+        SimpleDateFormat formatter = new SimpleDateFormat(config.getLogDateFormat());
         for (LogModel logModel : logModelList) {
             String LogDateTime = logModel.getDate() + " " + logModel.getTime();
             try {
@@ -78,7 +77,7 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
     private void deleteLogsOutOfDuration(LinkedList<LogModel> logQueue, Date someMinuteAgo, Date now) {
         while (true) {
             Date parse = null;
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+            SimpleDateFormat formatter = new SimpleDateFormat(config.getLogDateFormat());
             LogModel lastLog = logQueue.getLast();
             String lastLogDateTime = lastLog.getDate() + " " + lastLog.getTime();
             try {
@@ -94,26 +93,18 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
         }
     }
 
-    private void sleep(int time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     void mySqlWriter(AlertModel alertModel) {
         AlertModel3 alertModel3 = (AlertModel3) alertModel;
         logger.info("insert alert type3 on table alert_type3 in logsAlert Data Base with parameters: "
-                +alertModel3.getComponentName()+" and "
-                +alertModel3.getRate());
-        String sql = String.format("INSERT INTO alert_type3 (component_name , rate) VALUES ('%s', '%s')",
+                + alertModel3.getComponentName() + " and "
+                + alertModel3.getRate());
+        String query = String.format("INSERT INTO alert_type3 (component_name , rate) VALUES ('%s', '%s')",
                 alertModel3.getComponentName(), alertModel3.getRate());
         try {
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate(sql);
-            System.out.println(sql);
+            stmt.executeUpdate(query);
         } catch (SQLException e) {
             e.printStackTrace();
         }

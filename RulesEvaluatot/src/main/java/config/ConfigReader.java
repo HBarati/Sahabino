@@ -9,6 +9,8 @@ public class ConfigReader {
 
     private String Topic;
     private String BootStrapServer;
+    private String logDateFormat;
+    private String ruleEvaluatingInterval;
 
     private String DBUrl;
     private String DBUser;
@@ -25,16 +27,24 @@ public class ConfigReader {
     private String Type3Period;
     private String Type3Rate;
 
-    public static ConfigReader load() throws IOException {
+    public static ConfigReader load(){
         if (instance == null) {
             instance = new ConfigReader();
             Properties properties = new Properties();
             InputStream inputStream = Thread.currentThread()
                     .getContextClassLoader()
-                    .getResourceAsStream("rulesType.properties");
+                    .getResourceAsStream("rulesConfig.properties");
             if (inputStream != null) {
-                properties.load(inputStream);
+                try {
+                    properties.load(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            //all
+
+            instance.logDateFormat = properties.getProperty("logDateFormat");
+            instance.ruleEvaluatingInterval = properties.getProperty("ruleEvaluatingIntervalMilliSecond");
             //kafkaConsumer
             instance.Topic = properties.getProperty("Topic");
             instance.BootStrapServer = properties.getProperty("BootStrapServer");
@@ -107,6 +117,14 @@ public class ConfigReader {
 
     public String getTopic() {
         return Topic;
+    }
+    public String getLogDateFormat() {
+        return logDateFormat;
+    }
+
+
+    public String getRuleEvaluatingInterval() {
+        return ruleEvaluatingInterval;
     }
 }
 

@@ -5,7 +5,6 @@ import entity.AlertModel2;
 import entity.LogModel;
 import kafkaFactory.KafkaLogsConsumer;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -18,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RulesEvaluatorType2 extends RuleEvaluator {
     //Constructor
-    public RulesEvaluatorType2() throws IOException, SQLException {
+    public RulesEvaluatorType2() throws SQLException {
     }
 
     @Override
@@ -26,7 +25,7 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         List<LogModel> logModelList;
         String Type2LogPriority = config.getType2LogPriority();
         String Type2LogCategory = config.getType2LogCategory();
-        Long duration = Long.parseLong(config.getType2Period());
+        long duration = Long.parseLong(config.getType2Period());
         String Type2Rate = config.getType2Rate();
         LinkedList<LogModel> logQueue = new LinkedList<>();
 
@@ -38,9 +37,9 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
             addingLogsInDuration(logModelList, logQueue, someMinuteAgo, now, Type2LogCategory, Type2LogPriority);
             if (!logQueue.isEmpty()) {
                 deleteLogsOutOfDuration(logQueue, someMinuteAgo, now);
-                logger.info("Queue in alert type2 is updated! (all the logs is in duration: "+duration+")");
+                logger.info("Queue in alert type2 is updated! (all the logs is in duration: " + duration + ")");
                 ruleType2Checker(logQueue, Type2Rate);
-                sleep(1500);
+                sleep(Integer.parseInt(config.getRuleEvaluatingInterval()));
             } else {
                 logger.fatal("alert type2 log Queue is empty!");
             }
@@ -52,7 +51,8 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         System.out.println(logQueue.size());
         if (logQueue.size() >= rate) {
             String description = twoLastLog(logQueue);
-            AlertModel2 alertModel2 = new AlertModel2(logQueue.getFirst().getCategory(), description, logQueue.getFirst().getPriority(), String.valueOf(logQueue.size()));
+            AlertModel2 alertModel2 = new AlertModel2(logQueue.getFirst().getCategory(),
+                    description, logQueue.getFirst().getPriority(), String.valueOf(logQueue.size()));
             mySqlWriter(alertModel2);
         }
     }
@@ -77,7 +77,7 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
             , String Type2LogCategory
             , String Type2LogPriority) {
         Date parse = null;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+        SimpleDateFormat formatter = new SimpleDateFormat(config.getLogDateFormat());
         for (LogModel logModel : logModelList) {
             String LogDateTime = logModel.getDate() + " " + logModel.getTime();
             try {
@@ -100,7 +100,7 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
             , Date now) {
         while (true) {
             Date parse = null;
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+            SimpleDateFormat formatter = new SimpleDateFormat(config.getLogDateFormat());
             LogModel lastLog = logQueue.getLast();
             String lastLogDateTime = lastLog.getDate() + " " + lastLog.getTime();
             try {
@@ -116,29 +116,22 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         }
     }
 
-    private void sleep(int time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     void mySqlWriter(AlertModel alertModel) {
         AlertModel2 alertModel2 = (AlertModel2) alertModel;
         logger.info("insert alert type2 on table alert_type2 in logsAlert Data Base with parameters: "
-                +alertModel2.getComponentName()+" and "
-                +alertModel2.getDescription()+" and "
-                +alertModel2.getPriority()+" and "
-                +alertModel2.getRate());
+                + alertModel2.getComponentName() + " and "
+                + alertModel2.getDescription() + " and "
+                + alertModel2.getPriority() + " and "
+                + alertModel2.getRate());
         String sql = String.format("INSERT INTO alert_type2 (component_name, description, log_level , rate) VALUES ('%s','%s', '%s' ,'%s')",
                 alertModel2.getComponentName(), alertModel2.getDescription(), alertModel2.getPriority(), alertModel2.getRate());
         System.out.println(sql);
         try {
             Statement stmt = connection.createStatement();
             stmt.executeUpdate(sql);
-            System.out.println(sql);
+//            System.out.println(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
