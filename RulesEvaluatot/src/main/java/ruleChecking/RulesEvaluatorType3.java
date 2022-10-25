@@ -36,7 +36,10 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
             if (!logQueue.isEmpty()) {
                 deleteLogsOutOfDuration(logQueue, someMinuteAgo, now);
                 logger.info("Queue in alert type3 is updated! (all the logs is in duration: " + duration + ")");
-                ruleType3Checker(logQueue, Type3Rate);
+                AlertModel3 alertModel3 = ruleType3Checker(logQueue, Type3Rate);
+                if (alertModel3 != null) {
+                    mySqlWriter(alertModel3);
+                }
                 sleep(Integer.parseInt(config.getRuleEvaluatingInterval()));
             } else {
                 logger.fatal("alert type3 log Queue is empty!");
@@ -44,13 +47,14 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
         }
     }
 
-    private void ruleType3Checker(LinkedList<LogModel> logQueue, String Type3Rate) {
+    public AlertModel3 ruleType3Checker(LinkedList<LogModel> logQueue, String Type3Rate) {
         int rate = Integer.parseInt(Type3Rate);
         System.out.println(logQueue.size());
         if (logQueue.size() >= rate) {
             AlertModel3 alertModel3 = new AlertModel3(logQueue.getFirst().getCategory(), String.valueOf(logQueue.size()));
-            mySqlWriter(alertModel3);
+            return alertModel3;
         }
+        return null;
     }
 
     public void addingLogsInDuration(List<LogModel> logModelList

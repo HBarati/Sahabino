@@ -38,7 +38,10 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
             if (!logQueue.isEmpty()) {
                 deleteLogsOutOfDuration(logQueue, someMinuteAgo, now);
                 logger.info("Queue in alert type2 is updated! (all the logs is in duration: " + duration + ")");
-                ruleType2Checker(logQueue, Type2Rate);
+                AlertModel2 alertModel2 = ruleType2Checker(logQueue, Type2Rate);
+                if (alertModel2 != null) {
+                    mySqlWriter(alertModel2);
+                }
                 sleep(Integer.parseInt(config.getRuleEvaluatingInterval()));
             } else {
                 logger.fatal("alert type2 log Queue is empty!");
@@ -46,14 +49,14 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         }
     }
 
-    private void ruleType2Checker(LinkedList<LogModel> logQueue, String Type2Rate) {
+    public AlertModel2 ruleType2Checker(LinkedList<LogModel> logQueue, String Type2Rate) {
         int rate = Integer.parseInt(Type2Rate);
         if (logQueue.size() >= rate) {
             String description = twoLastLog(logQueue);
-            AlertModel2 alertModel2 = new AlertModel2(logQueue.getFirst().getCategory(),
+            return new AlertModel2(logQueue.getFirst().getCategory(),
                     description, logQueue.getFirst().getPriority(), String.valueOf(logQueue.size()));
-            mySqlWriter(alertModel2);
         }
+        return null;
     }
 
     private String twoLastLog(LinkedList<LogModel> logQueue) {
