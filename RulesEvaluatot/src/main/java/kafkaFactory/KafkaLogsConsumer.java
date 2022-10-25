@@ -2,20 +2,32 @@ package kafkaFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import config.ConfigReader;
 import entity.LogModel;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
-
+import org.apache.log4j.Logger;
+import ruleChecking.RuleEvaluator;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
 public class KafkaLogsConsumer {
-    private final static String TOPIC = "log22222";
-    private final static String BOOTSTRAP_SERVERS = "localhost:9092";
+    private static ConfigReader config;
 
-     public static Consumer<String, String> createConsumer() {
+    static {
+        try {
+            config = ConfigReader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private final static String TOPIC = config.getTopic();
+    private final static String BOOTSTRAP_SERVERS = config.getBootStrapServer();
+
+    public static Consumer<String, String> createConsumer() {
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
@@ -26,12 +38,14 @@ public class KafkaLogsConsumer {
 //        props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, 1024);
 
         final Consumer<String, String> consumer = new KafkaConsumer<>(props);
-
+        Logger logger = Logger.getLogger(RuleEvaluator.class);
+        logger.info("Kafka consumer is using topic: "+config.getTopic()+"and BootStrap server: "+config.getBootStrapServer()+" in "+consumer.toString());
         consumer.subscribe(Collections.singletonList(TOPIC));
         return consumer;
     }
 
     public static List<LogModel> runConsumer(Consumer<String, String> consumer) {
+        Logger logger = Logger.getLogger(RuleEvaluator.class);
         ObjectMapper objectMapper = new ObjectMapper();
         List<LogModel> logModelList = new ArrayList<>();
 
@@ -42,8 +56,10 @@ public class KafkaLogsConsumer {
             try {
                 log = objectMapper.readValue(consumerRecord.value(), LogModel.class);
             } catch (JsonProcessingException e) {
+                logger.error("logs in the kafka are not valid type");
                 e.printStackTrace();
             }
+            logger.info("read log: "+log.toString()+" from kafka and add to the log list logModelList as "+(logModelList.size()+2)+"s log");
             logModelList.add(log);
         }
         consumer.commitAsync();

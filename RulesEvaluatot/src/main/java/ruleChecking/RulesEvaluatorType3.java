@@ -22,14 +22,11 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
 
     @Override
     public void run() {
-        List<LogModel> logModelList = null;
+        List<LogModel> logModelList;
         String Type3LogCategory = config.getType3LogCategory();
-        String Type3Period = config.getType3Period();
+        long duration = Long.parseLong(config.getType3Period());
         String Type3Rate = config.getType3Rate();
         LinkedList<LogModel> logQueue = new LinkedList<>();
-
-        Long duration = Long.parseLong(Type3Period);
-//        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
         while (true) {
             Date now = new Date(System.currentTimeMillis());
@@ -39,8 +36,11 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
             addingLogsInDuration(logModelList, logQueue, someMinuteAgo, now, Type3LogCategory);
             if (!logQueue.isEmpty()) {
                 deleteLogsOutOfDuration(logQueue, someMinuteAgo, now);
+                logger.info("Queue in alert type3 is updated! (all the logs is in duration: "+duration+")");
                 ruleType3Checker(logQueue, Type3Rate);
                 sleep(1500);
+            }else {
+                logger.fatal("alert type3 log Queue is empty!");
             }
         }
     }
@@ -104,12 +104,14 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
 
     @Override
     void mySqlWriter(AlertModel alertModel) {
-        Statement stmt = null;
         AlertModel3 alertModel3 = (AlertModel3) alertModel;
+        logger.info("insert alert type3 on table alert_type3 in logsAlert Data Base with parameters: "
+                +alertModel3.getComponentName()+" and "
+                +alertModel3.getRate());
         String sql = String.format("INSERT INTO alert_type3 (component_name , rate) VALUES ('%s', '%s')",
                 alertModel3.getComponentName(), alertModel3.getRate());
         try {
-            stmt = connection.createStatement();
+            Statement stmt = connection.createStatement();
             stmt.executeUpdate(sql);
             System.out.println(sql);
         } catch (SQLException e) {

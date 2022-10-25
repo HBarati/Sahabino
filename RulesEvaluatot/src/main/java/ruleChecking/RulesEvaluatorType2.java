@@ -2,10 +2,8 @@ package ruleChecking;
 
 import entity.AlertModel;
 import entity.AlertModel2;
-import entity.AlertModel3;
 import entity.LogModel;
 import kafkaFactory.KafkaLogsConsumer;
-import org.apache.kafka.common.protocol.types.Field;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -25,25 +23,26 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
 
     @Override
     public void run() {
-        List<LogModel> logModelList = null;
+        List<LogModel> logModelList;
         String Type2LogPriority = config.getType2LogPriority();
         String Type2LogCategory = config.getType2LogCategory();
-        String Type2Period = config.getType2Period();
+        Long duration = Long.parseLong(config.getType2Period());
         String Type2Rate = config.getType2Rate();
         LinkedList<LogModel> logQueue = new LinkedList<>();
-
-        Long duration = Long.parseLong(Type2Period);
 
         while (true) {
             Date now = new Date(System.currentTimeMillis());
             Date someMinuteAgo = new Date(System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(duration));
             logModelList = KafkaLogsConsumer.runConsumer(consumer);
-
+            // made a Queue that all of the logs is in the duration
             addingLogsInDuration(logModelList, logQueue, someMinuteAgo, now, Type2LogCategory, Type2LogPriority);
             if (!logQueue.isEmpty()) {
                 deleteLogsOutOfDuration(logQueue, someMinuteAgo, now);
+                logger.info("Queue in alert type2 is updated! (all the logs is in duration: "+duration+")");
                 ruleType2Checker(logQueue, Type2Rate);
                 sleep(1500);
+            } else {
+                logger.fatal("alert type2 log Queue is empty!");
             }
         }
     }
@@ -128,6 +127,11 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
     @Override
     void mySqlWriter(AlertModel alertModel) {
         AlertModel2 alertModel2 = (AlertModel2) alertModel;
+        logger.info("insert alert type2 on table alert_type2 in logsAlert Data Base with parameters: "
+                +alertModel2.getComponentName()+" and "
+                +alertModel2.getDescription()+" and "
+                +alertModel2.getPriority()+" and "
+                +alertModel2.getRate());
         String sql = String.format("INSERT INTO alert_type2 (component_name, description, log_level , rate) VALUES ('%s','%s', '%s' ,'%s')",
                 alertModel2.getComponentName(), alertModel2.getDescription(), alertModel2.getPriority(), alertModel2.getRate());
         System.out.println(sql);

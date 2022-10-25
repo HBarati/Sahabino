@@ -7,6 +7,9 @@ import java.util.Properties;
 public class ConfigReader {
     private static ConfigReader instance;
 
+    private String Topic;
+    private String BootStrapServer;
+
     private String DBUrl;
     private String DBUser;
     private String DBPassword;
@@ -32,6 +35,9 @@ public class ConfigReader {
             if (inputStream != null) {
                 properties.load(inputStream);
             }
+            //kafkaConsumer
+            instance.Topic = properties.getProperty("Topic");
+            instance.BootStrapServer = properties.getProperty("BootStrapServer");
             //DB information
             instance.DBUrl = properties.getProperty("DBUrl");
             instance.DBUser = properties.getProperty("DBUser");
@@ -95,5 +101,12 @@ public class ConfigReader {
         return Type3Rate;
     }
 
+    public String getBootStrapServer() {
+        return BootStrapServer;
+    }
+
+    public String getTopic() {
+        return Topic;
+    }
 }
 

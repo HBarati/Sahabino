@@ -4,6 +4,7 @@ import config.ConfigReader;
 import entity.LogModel;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.log4j.Logger;
 import serializer.LogSerializer;
 
 import java.io.IOException;
@@ -15,11 +16,11 @@ class KafkaLogsProducer {
     static {
         try {
             config = ConfigReader.load();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     private final static String TOPIC = config.getTopic();
     private final static String BOOTSTRAP_SERVERS = config.getBootStrapServer();
 
@@ -33,8 +34,10 @@ class KafkaLogsProducer {
     }
 
     public static void runProducer(LogModel log){
+        Logger logger = Logger.getLogger(LogIngester.class);
         final Producer<String, LogModel> producer = createProducer();
         try {
+            logger.info("Kafka consumer is using topic: "+config.getTopic()+"and BootStrap server: "+config.getBootStrapServer());
             final ProducerRecord<String, LogModel> record = new ProducerRecord<>(TOPIC, log.getCategory(), log);
             producer.send(record);
         } finally {
