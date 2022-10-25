@@ -1,7 +1,5 @@
 package entity;
 
-import java.time.LocalDateTime;
-
 public class LogModel {
 
     private String date;

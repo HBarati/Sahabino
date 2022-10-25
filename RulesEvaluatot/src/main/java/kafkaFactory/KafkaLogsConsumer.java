@@ -14,12 +14,12 @@ import java.util.*;
 
 public class KafkaLogsConsumer {
     private static ConfigReader config = ConfigReader.load();
-    private final static String TOPIC = config.getTopic();
-    private final static String BOOTSTRAP_SERVERS = config.getBootStrapServer();
+
 
     public static Consumer<String, String> createConsumer() {
         final Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBootStrapServer());
+        //TODO group id
         props.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -31,7 +31,7 @@ public class KafkaLogsConsumer {
         Logger logger = Logger.getLogger(RuleEvaluator.class);
         logger.info("Kafka consumer is using topic: " + config.getTopic() + "and BootStrap server: "
                 + config.getBootStrapServer() + " in " + consumer.toString());
-        consumer.subscribe(Collections.singletonList(TOPIC));
+        consumer.subscribe(Collections.singletonList(config.getTopic()));
         return consumer;
     }
 
@@ -41,7 +41,6 @@ public class KafkaLogsConsumer {
         List<LogModel> logModelList = new ArrayList<>();
 
         final ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(500));
-        System.out.println(consumerRecords.count());
         for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
             LogModel log = null;
             try {

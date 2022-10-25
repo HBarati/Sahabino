@@ -9,8 +9,10 @@ public class ConfigReader {
     private String folderName;
     private String Topic;
     private String BootStrapServer;
+    private String logProducingIntervalMilliSecond;
 
-    public static ConfigReader load() throws IOException {
+
+    public static ConfigReader load() {
         if (instance == null) {
             instance = new ConfigReader();
             Properties properties = new Properties();
@@ -18,11 +20,16 @@ public class ConfigReader {
                     .getContextClassLoader()
                     .getResourceAsStream("logfile.properties");
             if (inputStream != null) {
-                properties.load(inputStream);
+                try {
+                    properties.load(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             instance.folderName = properties.getProperty("log.fileName");
             instance.Topic = properties.getProperty("Topic");
             instance.BootStrapServer = properties.getProperty("BootStrapServer");
+            instance.logProducingIntervalMilliSecond = properties.getProperty("logProducingIntervalMilliSecond");
 
         }
         return instance;
@@ -38,6 +45,10 @@ public class ConfigReader {
 
     public String getBootStrapServer() {
         return BootStrapServer;
+    }
+
+    public String getLogProducingIntervalMilliSecond() {
+        return logProducingIntervalMilliSecond;
     }
 }
 

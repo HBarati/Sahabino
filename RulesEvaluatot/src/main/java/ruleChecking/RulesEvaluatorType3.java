@@ -49,7 +49,7 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
 
     public AlertModel3 ruleType3Checker(LinkedList<LogModel> logQueue, String Type3Rate) {
         int rate = Integer.parseInt(Type3Rate);
-        System.out.println(logQueue.size());
+        logger.info("log Queue size is: "+logQueue.size());
         if (logQueue.size() >= rate) {
             AlertModel3 alertModel3 = new AlertModel3(logQueue.getFirst().getCategory(), String.valueOf(logQueue.size()));
             return alertModel3;
@@ -107,6 +107,7 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
         logger.info("insert alert type3 on table alert_type3 in logsAlert Data Base with parameters: "
                 + alertModel3.getComponentName() + " and "
                 + alertModel3.getRate());
+        //SQL Injection!!
         String query = String.format("INSERT INTO alert_type3 (component_name , rate) VALUES ('%s', '%s')",
                 alertModel3.getComponentName(), alertModel3.getRate());
         try {

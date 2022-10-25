@@ -1,6 +1,7 @@
 package ingester;
 
 import entity.LogModel;
+import kafkaFactory.KafkaLogsProducer;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -22,23 +23,16 @@ public class LogIngester implements Runnable {
         logger.info("in Thread: " + Thread.currentThread().getName() + " write log file: " + file.getName() + " in kafka");
         try (BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
             String line;
+            LogModel log;
             while ((line = br.readLine()) != null) {
                 String regex = "(\\d{4}-\\d{2}-\\d{2}) (\\d{2}:\\d{2}:\\d{2},\\d{3}) \\[(.*)\\] ([^ ]*) +([^ ]*) - (.*)$";
 
                 Pattern p = Pattern.compile(regex);
-                String sample = line;
-                Matcher matcher = p.matcher(sample);
-                System.out.println(matcher.matches());
+                Matcher matcher = p.matcher(line);
                 if (matcher.matches() && matcher.groupCount() == 6) {
-                    String[] logPart = new String[6];
-                    for (int i = 0; i < 6; i++) {
-                        logPart[i] = matcher.group(i + 1);
-                    }
-                    LogModel log = new LogModel(logPart[0], logPart[1], logPart[2], logPart[3], logPart[4], logPart[5]);
-
-                    KafkaLogsProducer kafkaLogsProducer = new KafkaLogsProducer();
-                    kafkaLogsProducer.runProducer(log);
-
+                    log = new LogModel(matcher.group(1), matcher.group(2), matcher.group(3),
+                            matcher.group(4), matcher.group(5), matcher.group(6));
+                    KafkaLogsProducer.runProducer(log);
                 }
             }
         } catch (Exception e) {
