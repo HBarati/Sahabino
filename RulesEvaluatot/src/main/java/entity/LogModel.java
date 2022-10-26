@@ -1,5 +1,7 @@
 package entity;
-
+/**
+ * LogModel is standard frame for logs
+ */
 public class LogModel {
 
     private String date;

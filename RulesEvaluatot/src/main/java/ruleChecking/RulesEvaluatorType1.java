@@ -15,6 +15,15 @@ public class RulesEvaluatorType1 extends RuleEvaluator {
     public RulesEvaluatorType1() throws SQLException {
     }
 
+    /**
+     * This is the principal method for rule type 1.
+     * first give the necessary parameter from config file.
+     * second give the logModel list from kafka as consumer.
+     * third check any logs of logModel list too see that the condition is fulfilled or not.
+     * fourth if rules was met, made an alertType1 and send to the mySqlWriter method for write on table.
+     * Then the second to fourth steps will be running in a thread until the code is running,
+     * which will also check the new list of logs from Kafka as soon as they get them.
+     */
     @Override
     public void run() {
         List<LogModel> logModelList;

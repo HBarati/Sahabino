@@ -18,7 +18,7 @@ public class KafkaLogsProducer {
 
     /**
      * This method create a kafka producer with our given producer config.
-     * @return KafkaProducer
+     * @return Kafka Producer
      */
     private static Producer<String, LogModel> createProducer() {
         Properties props = new Properties();

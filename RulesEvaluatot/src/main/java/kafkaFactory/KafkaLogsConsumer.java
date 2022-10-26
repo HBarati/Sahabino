@@ -15,8 +15,12 @@ import java.util.*;
 public class KafkaLogsConsumer {
     private static ConfigReader config = ConfigReader.load();
 
-
+    /**
+     *This method create a kafka consumer with our given consumer config.
+     * @return kafka Consumer
+     */
     public static Consumer<String, String> createConsumer() {
+        Logger logger = Logger.getLogger(RuleEvaluator.class);
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBootStrapServer());
         //TODO group id
@@ -28,13 +32,19 @@ public class KafkaLogsConsumer {
 //        props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, 1024);
 
         final Consumer<String, String> consumer = new KafkaConsumer<>(props);
-        Logger logger = Logger.getLogger(RuleEvaluator.class);
-        logger.info("Kafka consumer is using topic: " + config.getTopic() + "and BootStrap server: "
-                + config.getBootStrapServer() + " in " + consumer.toString());
         consumer.subscribe(Collections.singletonList(config.getTopic()));
+        logger.info("Kafka consumer is using topic: " + config.getTopic() +
+                "and BootStrap server: " + config.getBootStrapServer() +
+                " in " + consumer.toString());
         return consumer;
     }
 
+    /**
+     *This method give the consumer,
+     * and read logs as consumer record from kafka and make a logModel list from them.
+     * @param consumer pass the consumer from Consumer method.
+     * @return list of logs that read from kafka
+     */
     public static List<LogModel> runConsumer(Consumer<String, String> consumer) {
         Logger logger = Logger.getLogger(RuleEvaluator.class);
         ObjectMapper objectMapper = new ObjectMapper();

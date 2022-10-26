@@ -19,7 +19,17 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
     //Constructor
     public RulesEvaluatorType2() throws SQLException {
     }
-
+    /**
+     * This is the principal method for rule type 2.
+     * first give the necessary parameter from config file and made a Queue as linkedList to keep the logs at duration.
+     * second make 2 parameter as now and someMinuteAgo for making Queue and give the logModel list from kafka as consumer.
+     * third call the addingLogsInDuration method for add new read log that has the rules(category, priority and duration) to the Queue.
+     * fourth if Queue is not empty call the deleteLogsOutOfDuration method to clean the Queue and make sure that all of the logs in Queue are in the duration.
+     * fifth call the ruleType2 checker and pass to it Queue and rate. if rules was met(rate), made an alertType2.
+     * sixth if alertType2 has value on it, send to the mySqlWriter method for write on table.
+     * Then the second to sixth steps will be running in a thread until the code is running,
+     * which will also check the new list of logs from Kafka as soon as they get them.
+     */
     @Override
     public void run() {
         List<LogModel> logModelList;
@@ -49,6 +59,13 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         }
     }
 
+    /**
+     * This method check if the size of the Queue(all of the logs inside the Queue has rules) is greater than rate,
+     * made an alertType 2.
+     * @param logQueue provided Queue
+     * @param Type2Rate rate
+     * @return an alertType 2
+     */
     public AlertModel2 ruleType2Checker(LinkedList<LogModel> logQueue, String Type2Rate) {
         int rate = Integer.parseInt(Type2Rate);
         if (logQueue.size() >= rate) {
@@ -59,6 +76,11 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         return null;
     }
 
+    /**
+     * This method give two last log from the Queue for alertType2 description.
+     * @param logQueue provided Queue
+     * @return description
+     */
     private String twoLastLog(LinkedList<LogModel> logQueue) {
         String description;
         LogModel logModel = logQueue.peekFirst();
@@ -71,7 +93,15 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         }
         return description;
     }
-
+    /**
+     * This method give the Logs and Queue and parameters to add conditional logs to the Queue.
+     * @param logModelList new logModelList from kafka
+     * @param logQueue provided Queue
+     * @param someMinuteAgo duration time from now
+     * @param now now time
+     * @param Type2LogCategory category for check the logs
+     * @param Type2LogPriority priority for check the logs
+     */
     private void addingLogsInDuration(List<LogModel> logModelList
             , LinkedList<LogModel> logQueue
             , Date someMinuteAgo
@@ -97,6 +127,12 @@ public class RulesEvaluatorType2 extends RuleEvaluator {
         }
     }
 
+    /**
+     * This method give the duration to updated Queue logs(all of the logs out the duration are deleted).
+     * @param logQueue provided Queue
+     * @param someMinuteAgo duration time from now
+     * @param now now time
+     */
     private void deleteLogsOutOfDuration(LinkedList<LogModel> logQueue
             , Date someMinuteAgo
             , Date now) {

@@ -15,10 +15,20 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class RulesEvaluatorType3 extends RuleEvaluator {
-
+    //Constructor
     public RulesEvaluatorType3() throws SQLException {
     }
-
+    /**
+     * This is the principal method for rule type 3.
+     * first give the necessary parameter from config file and made a Queue as linkedList to keep the logs at duration.
+     * second make 2 parameter as now and someMinuteAgo for making Queue and give the logModel list from kafka as consumer.
+     * third call the addingLogsInDuration method for add new read log that has the rules(category and duration) to the Queue.
+     * fourth if Queue is not empty call the deleteLogsOutOfDuration method to clean the Queue and make sure that all of the logs in Queue are in the duration.
+     * fifth call the ruleType3 checker and pass to it Queue and rate. if rules was met(rate), made an alertType2.
+     * sixth if alertType3 has value on it, send to the mySqlWriter method for write on table.
+     * Then the second to sixth steps will be running in a thread until the code is running,
+     * which will also check the new list of logs from Kafka as soon as they get them.
+     */
     @Override
     public void run() {
         List<LogModel> logModelList;
@@ -46,7 +56,13 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
             }
         }
     }
-
+    /**
+     * This method check if the size of the Queue(all of the logs inside the Queue has rules) is greater than rate,
+     * made an alertType 3.
+     * @param logQueue provided Queue
+     * @param Type3Rate rate
+     * @return an alertType 3
+     */
     public AlertModel3 ruleType3Checker(LinkedList<LogModel> logQueue, String Type3Rate) {
         int rate = Integer.parseInt(Type3Rate);
         logger.info("log Queue size is: "+logQueue.size());
@@ -57,6 +73,14 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
         return null;
     }
 
+    /**
+     * This method give the Logs and Queue and parameters to add conditional logs to the Queue.
+     * @param logModelList new logModelList from kafka
+     * @param logQueue provided Queue
+     * @param someMinuteAgo duration time from now
+     * @param now now time
+     * @param Type3LogCategory category for check the logs
+     */
     public void addingLogsInDuration(List<LogModel> logModelList
             , LinkedList<LogModel> logQueue
             , Date someMinuteAgo
@@ -77,7 +101,12 @@ public class RulesEvaluatorType3 extends RuleEvaluator {
             }
         }
     }
-
+    /**
+     * This method give the duration to updated Queue logs(all of the logs out the duration are deleted).
+     * @param logQueue provided Queue
+     * @param someMinuteAgo duration time from now
+     * @param now now time
+     */
     public void deleteLogsOutOfDuration(LinkedList<LogModel> logQueue, Date someMinuteAgo, Date now) {
         while (true) {
             Date parse = null;

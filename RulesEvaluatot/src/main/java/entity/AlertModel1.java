@@ -1,5 +1,8 @@
 package entity;
 
+/**
+ * Alert model type 1 use when see a log from kafka and has priority and message for make alert in Data Base
+ */
 public class AlertModel1 implements AlertModel{
 
     private String priority ;

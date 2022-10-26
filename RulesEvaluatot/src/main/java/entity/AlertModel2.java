@@ -1,5 +1,8 @@
 package entity;
-
+/**
+ * Alert model type 2 use when we have more logs that has rate number of log in duration as same componentName and priority
+ * and has componentName and description and priority and rate for make alert in Data Base
+ */
 public class AlertModel2 implements AlertModel {
     private String componentName;
     private String description;

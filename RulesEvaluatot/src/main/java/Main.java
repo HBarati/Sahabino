@@ -3,13 +3,15 @@ import ruleChecking.RulesEvaluatorType1;
 import ruleChecking.RulesEvaluatorType2;
 import ruleChecking.RulesEvaluatorType3;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * The Main method make thread to the number of rules and run them multi threaded with executor in thread pools.
+ */
 public class Main {
     public static void main(String[] args) {
         Executor executor = Executors.newCachedThreadPool();
