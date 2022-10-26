@@ -18,7 +18,7 @@ public class ConfigReader {
             Properties properties = new Properties();
             InputStream inputStream = Thread.currentThread()
                     .getContextClassLoader()
-                    .getResourceAsStream("logfile.properties");
+                    .getResourceAsStream("fileConfig.properties");
             if (inputStream != null) {
                 try {
                     properties.load(inputStream);

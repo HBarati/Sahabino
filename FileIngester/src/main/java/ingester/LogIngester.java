@@ -10,6 +10,9 @@ import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * In this class give the log file from Main and parse them to logModel frame and write to the kafka.
+ */
 public class LogIngester implements Runnable {
     private File file;
     Logger logger = Logger.getLogger(LogIngester.class);
@@ -17,7 +20,10 @@ public class LogIngester implements Runnable {
     public LogIngester(File file) {
         this.file = file;
     }
-
+    /**
+     * This method give the one file and check each of line from the log file is match with log4j
+     * format, write on the kafka as producer.
+     */
     @Override
     public void run() {
         logger.info("in Thread: " + Thread.currentThread().getName() + " write log file: " + file.getName() + " in kafka");
@@ -33,6 +39,9 @@ public class LogIngester implements Runnable {
                     log = new LogModel(matcher.group(1), matcher.group(2), matcher.group(3),
                             matcher.group(4), matcher.group(5), matcher.group(6));
                     KafkaLogsProducer.runProducer(log);
+                }
+                else {
+                    logger.error("The logs of "+file.getName()+" file is not valid!");
                 }
             }
         } catch (Exception e) {

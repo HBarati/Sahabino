@@ -16,19 +16,29 @@ import java.util.Properties;
 public class KafkaLogsProducer {
     private static ConfigReader config = ConfigReader.load();
 
+    /**
+     * This method create a kafka producer with our given producer config.
+     * @return KafkaProducer
+     */
     private static Producer<String, LogModel> createProducer() {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getBootStrapServer());
         props.put(ProducerConfig.CLIENT_ID_CONFIG, "KafkaClientID");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, LogSerializer.class.getName());
+        Logger logger = Logger.getLogger(LogIngester.class);
+        logger.info("Kafka consumer is using topic: " + config.getTopic() + "and BootStrap server: " + config.getBootStrapServer());
         return new KafkaProducer<>(props);
     }
 
+    /**
+     *This method run the producer.
+     * give a log and made record on producer and send it to kafka.
+     *
+     * @param log pass a log to producer to write that to kafka
+     */
     public static void runProducer(LogModel log) {
-        Logger logger = Logger.getLogger(LogIngester.class);
         final Producer<String, LogModel> producer = createProducer();
-        logger.info("Kafka consumer is using topic: " + config.getTopic() + "and BootStrap server: " + config.getBootStrapServer());
         final ProducerRecord<String, LogModel> record = new ProducerRecord<>(config.getTopic(), log.getCategory(), log);
         producer.send(record);
         producer.flush();
