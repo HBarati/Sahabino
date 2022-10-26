@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * ConfigReader class make configurable our parameters and read them from fileConfig.properties
+ * and give them with getter class
+ */
 public class ConfigReader {
     private static ConfigReader instance;
     private String folderName;
