@@ -16,5 +16,6 @@ public class AlertType2 {
     String componentName;
     Long rate;
     String logLevel;
+    @Column(length=1500)
     String description;
 }

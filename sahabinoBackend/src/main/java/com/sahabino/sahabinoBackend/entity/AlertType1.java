@@ -14,5 +14,6 @@ public class AlertType1 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logID;
     String logLevel;
+   @Column(length=1500)
     String logMessage;
 }

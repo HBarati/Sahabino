@@ -34,3 +34,9 @@ services:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_USER: hatef
       MYSQL_PASSWORD: 123456
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
