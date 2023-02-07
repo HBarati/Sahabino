@@ -1,7 +1,6 @@
 import ruleChecking.RuleEvaluator;
+import ruleChecking.RulesEvaluatorDGIM;
 import ruleChecking.RulesEvaluatorType1;
-import ruleChecking.RulesEvaluatorType2;
-import ruleChecking.RulesEvaluatorType3;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,9 +16,10 @@ public class Main {
         Executor executor = Executors.newCachedThreadPool();
         List<RuleEvaluator> ruleEvaluators = new ArrayList<>();
         try {
+            ruleEvaluators.add(new RulesEvaluatorDGIM());
             ruleEvaluators.add(new RulesEvaluatorType1());
-            ruleEvaluators.add(new RulesEvaluatorType2());
-            ruleEvaluators.add(new RulesEvaluatorType3());
+//            ruleEvaluators.add(new RulesEvaluatorType2());
+//            ruleEvaluators.add(new RulesEvaluatorType3());
         } catch (SQLException e) {
             e.printStackTrace();
         }
